@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test Client</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .connection-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .connection-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(67, 233, 123, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(168, 237, 234, 0.3);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .status-disconnected {
+            background-color: #dc3545;
+        }
+
+        .status-connecting {
+            background-color: #ffc107;
+        }
+
+        .status-connected {
+            background-color: #28a745;
+        }
+
+        .test-events-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .test-events-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .event-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logs-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .logs-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .logs-container {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 4px solid transparent;
+        }
+
+        .log-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-left-color: #3b82f6;
+        }
+
+        .log-success {
+            background: rgba(34, 197, 94, 0.1);
+            border-left-color: #22c55e;
+        }
+
+        .log-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: #ef4444;
+        }
+
+        .log-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left-color: #f59e0b;
+        }
+
+        .timestamp {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .clear-logs {
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .input-group label {
+                min-width: auto;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+            
+            .event-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>WebSocket Test Client</h1>
+            <p>Test your local WebSocket server with ease</p>
+        </div>
+
+        <div class="content">
+            <!-- Connection Section -->
+            <div class="connection-section">
+                <h2>Connection Settings</h2>
+                <div class="input-group">
+                    <label for="wsUrl">WebSocket URL:</label>
+                    <input type="text" id="wsUrl" placeholder="ws://localhost:8080" value="ws://localhost:8080">
+                </div>
+                <div class="button-group">
+                    <button id="connectBtn" class="btn btn-success">
+                        <span class="status-indicator status-disconnected" id="statusIndicator"></span>
+                        Connect
+                    </button>
+                    <button id="disconnectBtn" class="btn btn-danger" disabled>Disconnect</button>
+                    <button id="clearLogsBtn" class="btn btn-secondary">Clear Logs</button>
+                </div>
+            </div>
+
+            <!-- Test Events Section -->
+            <div class="test-events-section">
+                <h2>Test Events</h2>
+                <div class="event-buttons">
+                    <button class="btn btn-primary test-event" data-event="ping">Send Ping</button>
+                    <button class="btn btn-primary test-event" data-event="hello">Send Hello</button>
+                    <button class="btn btn-primary test-event" data-event="message">Send Message</button>
+                    <button class="btn btn-primary test-event" data-event="data">Send Data</button>
+                    <button class="btn btn-primary test-event" data-event="user">Send User Event</button>
+                    <button class="btn btn-primary test-event" data-event="custom">Custom Event</button>
+                </div>
+            </div>
+
+            <!-- Logs Section -->
+            <div class="logs-section">
+                <h2>Connection Logs</h2>
+                <div class="logs-container" id="logsContainer">
+                    <div class="log-entry log-info">
+                        <span class="timestamp">[Ready]</span> WebSocket test client initialized. Enter a WebSocket URL and click Connect to start testing.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class WebSocketTestClient {
+            constructor() {
+                this.socket = null;
+                this.isConnected = false;
+                this.reconnectAttempts = 0;
+                this.maxReconnectAttempts = 5;
+                this.reconnectDelay = 1000;
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.updateConnectionStatus('disconnected');
+            }
+
+            initializeElements() {
+                this.wsUrlInput = document.getElementById('wsUrl');
+                this.connectBtn = document.getElementById('connectBtn');
+                this.disconnectBtn = document.getElementById('disconnectBtn');
+                this.clearLogsBtn = document.getElementById('clearLogsBtn');
+                this.logsContainer = document.getElementById('logsContainer');
+                this.statusIndicator = document.getElementById('statusIndicator');
+                this.testEventButtons = document.querySelectorAll('.test-event');
+            }
+
+            bindEvents() {
+                this.connectBtn.addEventListener('click', () => this.connect());
+                this.disconnectBtn.addEventListener('click', () => this.disconnect());
+                this.clearLogsBtn.addEventListener('click', () => this.clearLogs());
+                
+                this.testEventButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const eventType = e.target.dataset.event;
+                        this.sendTestEvent(eventType);
+                    });
+                });
+
+                // Enter key to connect
+                this.wsUrlInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.connect();
+                    }
+                });
+            }
+
+            connect() {
+                const url = this.wsUrlInput.value.trim();
+                
+                if (!url) {
+                    this.log('Please enter a WebSocket URL', 'error');
+                    return;
+                }
+
+                if (this.isConnected) {
+                    this.log('Already connected to WebSocket', 'warning');
+                    return;
+                }
+
+                try {
+                    this.updateConnectionStatus('connecting');
+                    this.log(`Connecting to ${url}...`, 'info');
+                    
+                    this.socket = new WebSocket(url);
+                    
+                    this.socket.onopen = () => {
+                        this.isConnected = true;
+                        this.reconnectAttempts = 0;
+                        this.updateConnectionStatus('connected');
+                        this.log('WebSocket connection established successfully!', 'success');
+                        this.updateButtonStates();
+                    };
+
+                    this.socket.onmessage = (event) => {
+                        this.log(`Received: ${event.data}`, 'info');
+                    };
+
+                    this.socket.onclose = (event) => {
+                        this.isConnected = false;
+                        this.updateConnectionStatus('disconnected');
+                        this.updateButtonStates();
+                        
+                        if (event.wasClean) {
+                            this.log(`Connection closed cleanly (code: ${event.code})`, 'info');
+                        } else {
+                            this.log(`Connection closed unexpectedly (code: ${event.code})`, 'error');
+                        }
+                    };
+
+                    this.socket.onerror = (error) => {
+                        this.log(`WebSocket error: ${error.message || 'Unknown error'}`, 'error');
+                    };
+
+                } catch (error) {
+                    this.log(`Failed to create WebSocket connection: ${error.message}`, 'error');
+                    this.updateConnectionStatus('disconnected');
+                }
+            }
+
+            disconnect() {
+                if (this.socket && this.isConnected) {
+                    this.socket.close(1000, 'User disconnected');
+                    this.log('Disconnecting from WebSocket...', 'info');
+                }
+            }
+
+            sendTestEvent(eventType) {
+                if (!this.isConnected) {
+                    this.log('Not connected to WebSocket. Please connect first.', 'error');
+                    return;
+                }
+
+                let message;
+                
+                switch (eventType) {
+                    case 'ping':
+                        message = { type: 'ping', timestamp: Date.now() };
+                        break;
+                    case 'hello':
+                        message = { type: 'hello', message: 'Hello from WebSocket client!', timestamp: Date.now() };
+                        break;
+                    case 'message':
+                        message = { type: 'message', content: 'This is a test message', timestamp: Date.now() };
+                        break;
+                    case 'data':
+                        message = { 
+                            type: 'data', 
+                            data: { 
+                                id: Math.random().toString(36).substr(2, 9),
+                                value: Math.floor(Math.random() * 100),
+                                timestamp: Date.now()
+                            }
+                        };
+                        break;
+                    case 'user':
+                        message = { 
+                            type: 'user', 
+                            user: {
+                                id: 1,
+                                name: 'Test User',
+                                email: 'test@example.com',
+                                timestamp: Date.now()
+                            }
+                        };
+                        break;
+                    case 'custom':
+                        const customMessage = prompt('Enter custom message:');
+                        if (customMessage) {
+                            message = { type: 'custom', message: customMessage, timestamp: Date.now() };
+                        } else {
+                            return;
+                        }
+                        break;
+                    default:
+                        message = { type: 'unknown', timestamp: Date.now() };
+                }
+
+                try {
+                    const messageStr = JSON.stringify(message, null, 2);
+                    this.socket.send(messageStr);
+                    this.log(`Sent: ${messageStr}`, 'success');
+                } catch (error) {
+                    this.log(`Failed to send message: ${error.message}`, 'error');
+                }
+            }
+
+            updateConnectionStatus(status) {
+                this.statusIndicator.className = `status-indicator status-${status}`;
+                
+                const statusText = {
+                    'disconnected': 'Disconnected',
+                    'connecting': 'Connecting...',
+                    'connected': 'Connected'
+                };
+                
+                this.connectBtn.innerHTML = `<span class="status-indicator status-${status}"></span>${statusText[status]}`;
+            }
+
+            updateButtonStates() {
+                this.connectBtn.disabled = this.isConnected;
+                this.disconnectBtn.disabled = !this.isConnected;
+                
+                this.testEventButtons.forEach(button => {
+                    button.disabled = !this.isConnected;
+                });
+            }
+
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry log-${type}`;
+                logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+                
+                this.logsContainer.appendChild(logEntry);
+                this.logsContainer.scrollTop = this.logsContainer.scrollHeight;
+            }
+
+            clearLogs() {
+                this.logsContainer.innerHTML = '';
+                this.log('Logs cleared', 'info');
+            }
+        }
+
+        // Initialize the WebSocket test client when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new WebSocketTestClient();
+        });
+    </script>
+</body>
+</html> 
