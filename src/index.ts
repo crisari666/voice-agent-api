@@ -95,7 +95,7 @@ class VoiceAgentExpressServer {
     }
 
     try {
-      const url = `${req.protocol}s://${req.get('host')}/twiml?websocketUrl=${encodeURIComponent(websocketUrl)}`;
+      const url = `${req.protocol}s://${req.get('host')}/twiml?websocketUrl=${decodeURIComponent(websocketUrl)}`;
       console.log('�� URL:', url);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
       await this.twilioClient.calls.create({
@@ -130,7 +130,7 @@ class VoiceAgentExpressServer {
           <Say voice="alice" language="es-ES">
               Hola, de Crédito. </Say>
           <Connect>
-            <Stream url="${encodeURIComponent(websocketUrl)}"/>
+            <Stream url="${decodeURIComponent(websocketUrl)}"/>
           </Connect>
       </Response>
     `;
