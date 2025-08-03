@@ -15,7 +15,6 @@ import type {
 
 interface ExpressServerConfig extends ServerConfig {
   readonly expressPort: number;
-  readonly ngrokUrl?: string;
 }
 
 class VoiceAgentExpressServer {
@@ -81,7 +80,7 @@ class VoiceAgentExpressServer {
   private async handleIniciarLlamada(req: Request, res: Response): Promise<void> {
     console.log('📞 Iniciando llamada...');
     
-    const ngrokUrl = this.config.ngrokUrl;
+    const { websocketUrl } = req.body;
     const customerPhoneNumber = process.env.CUSTOMER_PHONE_NUMBER;
     const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
@@ -90,9 +89,16 @@ class VoiceAgentExpressServer {
       return;
     }
 
+    if (!websocketUrl) {
+      res.status(400).send('Error: websocketUrl parameter is required');
+      return;
+    }
+
     try {
+      const url = `${req.protocol}://${req.get('host')}/twiml?websocketUrl=${encodeURIComponent(websocketUrl)}`;
+      console.log('🔗 URL:', url);
       await this.twilioClient.calls.create({
-        url: `${ngrokUrl}/twiml`,
+        url: url,
         to: customerPhoneNumber,
         from: twilioPhoneNumber,
       });
@@ -106,26 +112,22 @@ class VoiceAgentExpressServer {
   private handleTwiML(req: Request, res: Response): void {
     console.log('📄 Generando TwiML para la llamada...');
     
-    const ngrokUrl = this.config.ngrokUrl;
+    const websocketUrl = req.query.websocketUrl as string;
     
-    let wsUrl: string;
-    
-    if (ngrokUrl.startsWith('https://')) {
-      wsUrl = ngrokUrl.replace('https://', 'wss://');
-    } else if (ngrokUrl.startsWith('http://')) {
-      wsUrl = ngrokUrl.replace('http://', 'ws://');
-    } else {
-      wsUrl = `wss://${ngrokUrl}`;
+    if (!websocketUrl) {
+      console.error('❌ Error: websocketUrl parameter is required');
+      res.status(400).send('Error: websocketUrl parameter is required');
+      return;
     }
     
-    console.log('🔗 WebSocket URL for TwiML:', `${wsUrl}`);
+    console.log('🔗 WebSocket URL for TwiML:', websocketUrl);
     
     const twiml = `
       <Response>
           <Say voice="alice" language="es-ES">
               Hola, de Crédito. </Say>
           <Connect>
-            <Stream url="${wsUrl}/stream"/>
+            <Stream url="${websocketUrl}"/>
           </Connect>
       </Response>
     `;
@@ -235,8 +237,7 @@ const main = (): void => {
   const serverConfig: ExpressServerConfig = {
     port: 8881,
     host: 'localhost',
-    expressPort: parseInt(process.env.PORT || '8881'),
-    ngrokUrl: process.env.NGROK_URL
+    expressPort: parseInt(process.env.PORT || '8881')
   };
 
   const server = new VoiceAgentExpressServer(serverConfig);
