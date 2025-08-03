@@ -95,7 +95,7 @@ class VoiceAgentExpressServer {
     }
 
     try {
-      const url = `${req.protocol}://${req.get('host')}/twiml?websocketUrl=${encodeURIComponent(websocketUrl)}`;
+      const url = `${req.protocol}s://${req.get('host')}/twiml?websocketUrl=${encodeURIComponent(websocketUrl)}`;
       console.log('�� URL:', url);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
       await this.twilioClient.calls.create({
