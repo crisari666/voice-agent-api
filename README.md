@@ -84,6 +84,9 @@ The voice agent server consists of several key components:
 - Buffers incoming audio from Twilio
 - Streams processed audio back to Twilio
 - Handles audio format conversion (base64 encoding/decoding)
+- **Noise reduction and audio preprocessing**
+- **Dynamic noise gating to reduce background noise**
+- **Audio validation to filter out invalid chunks**
 
 ### 4. Function Calling
 - Executes custom functions based on voice commands
@@ -120,6 +123,23 @@ The server includes comprehensive error handling for:
 - Deepgram API errors
 - Function execution errors
 - Audio processing issues
+- Audio validation and noise reduction errors
+
+## Noise Reduction
+
+The server includes advanced audio processing to reduce noise and improve call quality:
+
+### Audio Preprocessing
+- **Dynamic noise gating**: Automatically detects and removes background noise
+- **Audio validation**: Filters out invalid or corrupted audio chunks
+- **Buffer optimization**: Smaller buffer sizes for lower latency
+- **Silence detection**: Skips processing of silent audio segments
+
+### Configuration
+- Adjustable noise threshold (default: 0.005)
+- Minimum audio chunk size validation (20 bytes)
+- Dynamic amplitude-based noise gating
+- Error handling for audio processing failures
 
 ## Logging
 
@@ -128,6 +148,7 @@ The server provides detailed logging for:
 - Function calls and results
 - Audio processing status
 - Error conditions
+- Audio chunk processing and noise reduction
 
 ## Graceful Shutdown
 
