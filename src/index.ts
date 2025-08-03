@@ -80,12 +80,12 @@ class VoiceAgentExpressServer {
   private async handleIniciarLlamada(req: Request, res: Response): Promise<void> {
     console.log('📞 Iniciando llamada...');
     
-    const { websocketUrl } = req.body;
-    const customerPhoneNumber = process.env.CUSTOMER_PHONE_NUMBER;
-    const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+    const { websocketUrl, fromNumber, toNumber } = req.body;
+    const customerPhoneNumber = toNumber || process.env.CUSTOMER_PHONE_NUMBER;
+    const twilioPhoneNumber = fromNumber || process.env.TWILIO_PHONE_NUMBER;
 
     if (!customerPhoneNumber || !twilioPhoneNumber) {
-      res.status(500).send('Error: CUSTOMER_PHONE_NUMBER and TWILIO_PHONE_NUMBER are required');
+      res.status(500).send('Error: Phone numbers are required. Either provide fromNumber and toNumber in request body or set CUSTOMER_PHONE_NUMBER and TWILIO_PHONE_NUMBER environment variables');
       return;
     }
 
@@ -96,7 +96,8 @@ class VoiceAgentExpressServer {
 
     try {
       const url = `${req.protocol}://${req.get('host')}/twiml?websocketUrl=${encodeURIComponent(websocketUrl)}`;
-      console.log('🔗 URL:', url);
+      console.log('�� URL:', url);
+      console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
       await this.twilioClient.calls.create({
         url: url,
         to: customerPhoneNumber,
