@@ -111,6 +111,7 @@ class VoiceAgentExpressServer {
   }
 
   private handleTwiML(req: Request, res: Response): void {
+    console.log('🔍 Request:', req.body);
     console.log('📄 Generando TwiML para la llamada...');
     
     const websocketUrl = req.query.websocketUrl as string;
@@ -121,6 +122,7 @@ class VoiceAgentExpressServer {
       return;
     }
     
+    
     console.log('🔗 WebSocket URL for TwiML:', websocketUrl);
     
     const twiml = `
@@ -128,7 +130,7 @@ class VoiceAgentExpressServer {
           <Say voice="alice" language="es-ES">
               Hola, de Crédito. </Say>
           <Connect>
-            <Stream url="${websocketUrl}"/>
+            <Stream url="${encodeURIComponent(websocketUrl)}"/>
           </Connect>
       </Response>
     `;
