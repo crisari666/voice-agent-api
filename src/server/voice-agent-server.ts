@@ -46,7 +46,7 @@ export class VoiceAgentExpressServer {
 
     this.setupExpressMiddleware();
     this.setupExpressRoutes();
-    //this.setupWebSocketHandlers();
+    this.setupWebSocketHandlers();
   }
 
   private loadAgentConfig(): any {
@@ -108,13 +108,16 @@ export class VoiceAgentExpressServer {
       console.log('📞 URL:', url);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
 
-      // Add query parameters to the WebSocket URL
-      const websocketUrlWithParams = new URL(websocketUrl);
-      Object.entries(additionalParams).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          websocketUrlWithParams.searchParams.append(key, String(value));
-        }
-      });
+      // Encode additional parameters as a single base64 JSON parameter
+      let websocketUrlWithParams: string;
+      if (Object.keys(additionalParams).length > 0) {
+        const paramsJson = JSON.stringify(additionalParams);
+        const paramsBase64 = Buffer.from(paramsJson).toString('base64');
+        const separator = websocketUrl.includes('?') ? '&' : '?';
+        websocketUrlWithParams = `${websocketUrl}${separator}params=${encodeURIComponent(paramsBase64)}`;
+      } else {
+        websocketUrlWithParams = websocketUrl;
+      }
 
       const urlWs = websocketUrlWithParams.toString();
       console.log({urlWs});
@@ -170,12 +173,26 @@ export class VoiceAgentExpressServer {
     this.wss.on('connection', (ws: WebSocket, req: any) => {
       console.log('🔗 Cliente de Twilio conectado al WebSocket.');
       
+      // Extract and decode parameters from the URL
+      let decodedParams: Record<string, any> = {};
+      try {
+        const url = new URL(req.url, `http://${req.headers.host}`);
+        const paramsBase64 = url.searchParams.get('params');
+        if (paramsBase64) {
+          const paramsJson = Buffer.from(decodeURIComponent(paramsBase64), 'base64').toString();
+          decodedParams = JSON.parse(paramsJson);
+          console.log('📋 Decoded parameters:', decodedParams);
+        }
+      } catch (error) {
+        console.error('❌ Error decoding parameters:', error);
+      }
+      
       const connectionTimeout = setTimeout(() => {
         console.log('⏰ WebSocket connection timeout');
         ws.close();
       }, 30000);
       
-      this.handleTwilioConnection(ws, connectionTimeout);
+      this.handleTwilioConnection(ws, connectionTimeout, decodedParams);
     });
 
     this.wss.on('error', (error) => {
@@ -183,8 +200,13 @@ export class VoiceAgentExpressServer {
     });
   }
 
-  private async handleTwilioConnection(ws: WebSocket, connectionTimeout: NodeJS.Timeout): Promise<void> {
+  private async handleTwilioConnection(ws: WebSocket, connectionTimeout: NodeJS.Timeout, decodedParams: Record<string, any> = {}): Promise<void> {
     try {
+      // Log the decoded parameters for debugging
+      if (Object.keys(decodedParams).length > 0) {
+        console.log('📋 Using decoded parameters in connection:', decodedParams);
+      }
+      
       const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
       
       // Connect to Deepgram using the correct authentication method
