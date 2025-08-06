@@ -117,6 +117,7 @@ export class VoiceAgentExpressServer {
             <Say voice="alice" language="es-ES"> Hola. </Say>
             <Connect>
               <Stream url="${websocketUrl}">
+                <Parameter name="customer_name" value="Felipe" />
               </Stream>
             </Connect>
         </Response>
