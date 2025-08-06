@@ -93,11 +93,10 @@ export class VoiceAgentExpressServer {
     }
 
     try {
-      const url = `${req.protocol}s://${req.get('host')}/twiml?websocketUrl=${decodeURIComponent(websocketUrl)}`;
-      console.log('📞 URL:', url);
+      console.log('📞 URL:', websocketUrl);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
       await this.twilioClient.calls.create({
-        url: url,
+        url: websocketUrl,
         to: customerPhoneNumber,
         from: twilioPhoneNumber,
       });
@@ -123,8 +122,7 @@ export class VoiceAgentExpressServer {
     
     const twiml = `
       <Response>
-          <Say voice="alice" language="es-ES">
-              Hola, de Crédito. </Say>
+          <Say voice="alice" language="es-ES"> Hola. </Say>
           <Connect>
             <Stream url="${decodeURIComponent(websocketUrl)}"/>
           </Connect>
@@ -162,17 +160,12 @@ export class VoiceAgentExpressServer {
 
       // Initialize Twilio audio processor with optimized settings
       const audioProcessor = new TwilioAudioProcessor({
-        bufferSize: 20 * 160, // Smaller buffer for lower latency
-        minChunkSize: 20,
-        noiseThreshold: 0.005
+        bufferSize: 20 * 160, // Same as Python BUFFER_SIZE
       });
       
-      let isDeepgramConnected = false;
-
       deepgramConnection.on('open', () => {
         console.log('✅ Conexión con Deepgram establecida.');
         clearTimeout(connectionTimeout);
-        isDeepgramConnected = true;
 
         // Send the agent configuration to Deepgram
         console.log('📤 Sending agent config to Deepgram...');
@@ -185,34 +178,12 @@ export class VoiceAgentExpressServer {
           const message = JSON.parse(messageStr);
           console.log('🎤 Received from Deepgram:', message);
           
-          
-          switch (message.type) {
-            case 'Welcome':
-              console.log('🎤 Welcome message:', message);
-              break;
-            case 'Transcript':
-              console.log('🎤 Transcript message:', message);
-              break;
-            case 'UserStartedSpeaking':
-              console.log('🎤 User started speaking');
-              const currentStreamSid = audioProcessor.getStreamSid();
-              if (currentStreamSid) {
-                const clearMessage = {
-                  event: 'clear',
-                  streamSid: currentStreamSid
-                };
-                ws.send(JSON.stringify(clearMessage));
-              }
-              break;
-            case 'FunctionCallRequest':
-              console.log('🎤 Function call request:', message);
-              await this.handleFunctionCallRequest(message, deepgramConnection);
-              break;
-            default:
-              console.log('🎤 Unknown message type:', message.type);
+          // Handle text messages (like Python sts_receiver)
+          if (typeof message === 'object') {
+            await this.handleTextMessage(message, ws, deepgramConnection, audioProcessor.getStreamSid());
           }
         } catch (error) {
-          // If it's not JSON, it's raw audio data from Deepgram
+          // If it's not JSON, it's raw audio data from Deepgram (like Python)
           console.log('🎤 Received raw audio from Deepgram');
           const currentStreamSid = audioProcessor.getStreamSid();
           if (currentStreamSid) {
@@ -230,12 +201,10 @@ export class VoiceAgentExpressServer {
 
       deepgramConnection.on('close', () => {
         console.log('🚪 Conexión con Deepgram cerrada.');
-        isDeepgramConnected = false;
       });
 
       deepgramConnection.on('error', (error) => {
         console.error('❌ Deepgram connection error:', error);
-        isDeepgramConnected = false;
       });
 
       ws.on('message', (message: Buffer) => {
@@ -246,7 +215,7 @@ export class VoiceAgentExpressServer {
             utf8Data: message.toString()
           };
           
-          // Process the message using the audio processor
+          // Process the message using the audio processor (like Python twilio_receiver)
           audioProcessor.processMessage(messageObj, deepgramConnection);
           
         } catch (error) {
@@ -256,7 +225,6 @@ export class VoiceAgentExpressServer {
 
       ws.on('close', (code: number, reason: Buffer) => {
         console.log('🔌 Cliente de Twilio desconectado. Code:', code, 'Reason:', reason.toString());
-        isDeepgramConnected = false;
         deepgramConnection.close();
       });
 
@@ -267,6 +235,25 @@ export class VoiceAgentExpressServer {
     } catch (error) {
       console.error('❌ Error in Twilio connection handler:', error);
       clearTimeout(connectionTimeout);
+    }
+  }
+
+  private async handleTextMessage(message: any, twilioWs: WebSocket, deepgramConnection: WebSocket, streamSid: string | null): Promise<void> {
+    // Handle barge-in (like Python handle_barge_in)
+    if (message.type === 'UserStartedSpeaking') {
+      console.log('🎤 User started speaking');
+      if (streamSid) {
+        const clearMessage = {
+          event: 'clear',
+          streamSid: streamSid
+        };
+        twilioWs.send(JSON.stringify(clearMessage));
+      }
+    }
+
+    // Handle function call requests (like Python handle_function_call_request)
+    if (message.type === 'FunctionCallRequest') {
+      await this.handleFunctionCallRequest(message, deepgramConnection);
     }
   }
 
@@ -285,7 +272,7 @@ export class VoiceAgentExpressServer {
           console.log('Function call result:', result);
         } else {
           result = { error: `Unknown function: ${funcName}` };
-          console.log('Unknown function result:', result);
+          console.log(result);
         }
 
         const functionResult = {

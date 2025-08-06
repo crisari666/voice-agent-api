@@ -1,0 +1,221 @@
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="bold">Arquitectura Interna del Agente Voice AI</text>
+  
+  <!-- Agent Container -->
+  <rect x="50" y="60" width="1100" height="780" rx="15" fill="#fef3c7" stroke="#f59e0b" stroke-width="3"/>
+  <text x="600" y="85" text-anchor="middle" fill="#92400e" font-size="18" font-weight="bold">AGENTE DE VOZ AI - INSTANCIA INDIVIDUAL</text>
+  
+  <!-- Input Layer -->
+  <rect x="100" y="120" width="200" height="600" rx="10" fill="#3b82f6" stroke="#1e40af" stroke-width="2"/>
+  <text x="200" y="145" text-anchor="middle" fill="white" font-size="14" font-weight="bold">CAPA DE ENTRADA</text>
+  
+  <!-- Audio Input -->
+  <rect x="120" y="170" width="160" height="60" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="1"/>
+  <text x="200" y="190" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Audio Stream</text>
+  <text x="200" y="205" text-anchor="middle" fill="white" font-size="9">• Twilio WebRTC</text>
+  <text x="200" y="218" text-anchor="middle" fill="white" font-size="9">• Real-time Buffer</text>
+  
+  <!-- Audio Processor -->
+  <rect x="120" y="250" width="160" height="60" rx="5" fill="#8b5cf6" stroke="#7c3aed" stroke-width="1"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Audio Processor</text>
+  <text x="200" y="285" text-anchor="middle" fill="white" font-size="9">• Noise Reduction</text>
+  <text x="200" y="298" text-anchor="middle" fill="white" font-size="9">• Audio Enhancement</text>
+  
+  <!-- VAD -->
+  <rect x="120" y="330" width="160" height="60" rx="5" fill="#10b981" stroke="#047857" stroke-width="1"/>
+  <text x="200" y="350" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Voice Activity</text>
+  <text x="200" y="365" text-anchor="middle" fill="white" font-size="9">• Silence Detection</text>
+  <text x="200" y="378" text-anchor="middle" fill="white" font-size="9">• Speech Segmentation</text>
+  
+  <!-- STT -->
+  <rect x="120" y="410" width="160" height="60" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="1"/>
+  <text x="200" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Speech-to-Text</text>
+  <text x="200" y="445" text-anchor="middle" fill="white" font-size="9">• Deepgram Streaming</text>
+  <text x="200" y="458" text-anchor="middle" fill="white" font-size="9">• Multi-language</text>
+  
+  <!-- Input Validation -->
+  <rect x="120" y="490" width="160" height="60" rx="5" fill="#6b7280" stroke="#374151" stroke-width="1"/>
+  <text x="200" y="510" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Input Validation</text>
+  <text x="200" y="525" text-anchor="middle" fill="white" font-size="9">• Content Filter</text>
+  <text x="200" y="538" text-anchor="middle" fill="white" font-size="9">• Safety Check</text>
+  
+  <!-- Interrupt Handler -->
+  <rect x="120" y="570" width="160" height="60" rx="5" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
+  <text x="200" y="590" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Interrupt Handler</text>
+  <text x="200" y="605" text-anchor="middle" fill="white" font-size="9">• Barge-in Detection</text>
+  <text x="200" y="618" text-anchor="middle" fill="white" font-size="9">• Context Switch</text>
+  
+  <!-- Processing Core -->
+  <rect x="350" y="120" width="500" height="600" rx="10" fill="#10b981" stroke="#047857" stroke-width="2"/>
+  <text x="600" y="145" text-anchor="middle" fill="white" font-size="14" font-weight="bold">NÚCLEO DE PROCESAMIENTO</text>
+  
+  <!-- Context Manager -->
+  <rect x="370" y="170" width="220" height="80" rx="5" fill="#059669" stroke="#047857" stroke-width="1"/>
+  <text x="480" y="190" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Context Manager</text>
+  <text x="380" y="210" fill="white" font-size="9">• Conversation History</text>
+  <text x="380" y="223" fill="white" font-size="9">• User Profile</text>
+  <text x="380" y="236" fill="white" font-size="9">• Session State</text>
+  
+  <!-- Intent Recognition -->
+  <rect x="610" y="170" width="220" height="80" rx="5" fill="#0891b2" stroke="#0e7490" stroke-width="1"/>
+  <text x="720" y="190" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Intent Recognition</text>
+  <text x="620" y="210" fill="white" font-size="9">• NLU Pipeline</text>
+  <text x="620" y="223" fill="white" font-size="9">• Entity Extraction</text>
+  <text x="620" y="236" fill="white" font-size="9">• Confidence Scoring</text>
+  
+  <!-- Agent Brain -->
+  <rect x="370" y="270" width="460" height="120" rx="8" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+  <text x="600" y="295" text-anchor="middle" fill="white" font-size="14" font-weight="bold">AGENT BRAIN (LLM CORE)</text>
+  
+  <!-- LLM Engine -->
+  <rect x="390" y="310" width="120" height="70" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="1"/>
+  <text x="450" y="330" text-anchor="middle" fill="white" font-size="10" font-weight="bold">LLM Engine</text>
+  <text x="450" y="345" text-anchor="middle" fill="white" font-size="8">GPT-4/Claude</text>
+  <text x="450" y="358" text-anchor="middle" fill="white" font-size="8">Fine-tuned</text>
+  <text x="450" y="371" text-anchor="middle" fill="white" font-size="8">Local Models</text>
+  
+  <!-- Prompt Engine -->
+  <rect x="530" y="310" width="120" height="70" rx="5" fill="#f97316" stroke="#ea580c" stroke-width="1"/>
+  <text x="590" y="330" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Prompt Engine</text>
+  <text x="590" y="345" text-anchor="middle" fill="white" font-size="8">Dynamic Prompts</text>
+  <text x="590" y="358" text-anchor="middle" fill="white" font-size="8">Template System</text>
+  <text x="590" y="371" text-anchor="middle" fill="white" font-size="8">Context Injection</text>
+  
+  <!-- Response Generator -->
+  <rect x="670" y="310" width="120" height="70" rx="5" fill="#a855f7" stroke="#9333ea" stroke-width="1"/>
+  <text x="730" y="330" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Response Gen</text>
+  <text x="730" y="345" text-anchor="middle" fill="white" font-size="8">Natural Language</text>
+  <text x="730" y="358" text-anchor="middle" fill="white" font-size="8">Tone Adaptation</text>
+  <text x="730" y="371" text-anchor="middle" fill="white" font-size="8">Personality</text>
+  
+  <!-- Memory Systems -->
+  <rect x="370" y="410" width="220" height="100" rx="5" fill="#6366f1" stroke="#4f46e5" stroke-width="1"/>
+  <text x="480" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Memory Systems</text>
+  <text x="380" y="450" fill="white" font-size="9">• Working Memory (RAM)</text>
+  <text x="380" y="463" fill="white" font-size="9">• Short-term (Redis)</text>
+  <text x="380" y="476" fill="white" font-size="9">• Long-term (Vector DB)</text>
+  <text x="380" y="489" fill="white" font-size="9">• Episodic Memory</text>
+  <text x="380" y="502" fill="white" font-size="9">• Knowledge Base</text>
+  
+  <!-- Decision Engine -->
+  <rect x="610" y="410" width="220" height="100" rx="5" fill="#7c3aed" stroke="#6d28d9" stroke-width="1"/>
+  <text x="720" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Decision Engine</text>
+  <text x="620" y="450" fill="white" font-size="9">• Action Selection</text>
+  <text x="620" y="463" fill="white" font-size="9">• Flow Control</text>
+  <text x="620" y="476" fill="white" font-size="9">• Escalation Logic</text>
+  <text x="620" y="489" fill="white" font-size="9">• Function Calling</text>
+  <text x="620" y="502" fill="white" font-size="9">• API Integration</text>
+  
+  <!-- Agent Personality -->
+  <rect x="370" y="530" width="220" height="80" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="1"/>
+  <text x="480" y="550" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Agent Personality</text>
+  <text x="380" y="570" fill="white" font-size="9">• Character Traits</text>
+  <text x="380" y="583" fill="white" font-size="9">• Communication Style</text>
+  <text x="380" y="596" fill="white" font-size="9">• Emotional Intelligence</text>
+  
+  <!-- Tools & Functions -->
+  <rect x="610" y="530" width="220" height="80" rx="5" fill="#10b981" stroke="#047857" stroke-width="1"/>
+  <text x="720" y="550" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Tools & Functions</text>
+  <text x="620" y="570" fill="white" font-size="9">• Calendar Integration</text>
+  <text x="620" y="583" fill="white" font-size="9">• CRM Connector</text>
+  <text x="620" y="596" fill="white" font-size="9">• External APIs</text>
+  
+  <!-- Analytics Collector -->
+  <rect x="370" y="630" width="460" height="60" rx="5" fill="#6b7280" stroke="#374151" stroke-width="1"/>
+  <text x="600" y="650" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Analytics & Logging</text>
+  <text x="380" y="670" fill="white" font-size="9">• Conversation Metrics • Response Times • Success Rates • Error Tracking • User Satisfaction</text>
+  
+  <!-- Output Layer -->
+  <rect x="900" y="120" width="200" height="600" rx="10" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+  <text x="1000" y="145" text-anchor="middle" fill="white" font-size="14" font-weight="bold">CAPA DE SALIDA</text>
+  
+  <!-- Response Processor -->
+  <rect x="920" y="170" width="160" height="60" rx="5" fill="#7c3aed" stroke="#6d28d9" stroke-width="1"/>
+  <text x="1000" y="190" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Response Processor</text>
+  <text x="1000" y="205" text-anchor="middle" fill="white" font-size="9">• Content Filtering</text>
+  <text x="1000" y="218" text-anchor="middle" fill="white" font-size="9">• Safety Validation</text>
+  
+  <!-- TTS Engine -->
+  <rect x="920" y="250" width="160" height="60" rx="5" fill="#f59e0b" stroke="#d97706" stroke-width="1"/>
+  <text x="1000" y="270" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Text-to-Speech</text>
+  <text x="1000" y="285" text-anchor="middle" fill="white" font-size="9">• Deepgram Neural</text>
+  <text x="1000" y="298" text-anchor="middle" fill="white" font-size="9">• Voice Cloning</text>
+  
+  <!-- Audio Synthesis -->
+  <rect x="920" y="330" width="160" height="60" rx="5" fill="#ef4444" stroke="#dc2626" stroke-width="1"/>
+  <text x="1000" y="350" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Audio Synthesis</text>
+  <text x="1000" y="365" text-anchor="middle" fill="white" font-size="9">• Emotion Injection</text>
+  <text x="1000" y="378" text-anchor="middle" fill="white" font-size="9">• Prosody Control</text>
+  
+  <!-- Audio Post-Process -->
+  <rect x="920" y="410" width="160" height="60" rx="5" fill="#10b981" stroke="#047857" stroke-width="1"/>
+  <text x="1000" y="430" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Audio Enhancement</text>
+  <text x="1000" y="445" text-anchor="middle" fill="white" font-size="9">• Normalization</text>
+  <text x="1000" y="458" text-anchor="middle" fill="white" font-size="9">• Quality Control</text>
+  
+  <!-- Streaming Buffer -->
+  <rect x="920" y="490" width="160" height="60" rx="5" fill="#6b7280" stroke="#374151" stroke-width="1"/>
+  <text x="1000" y="510" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Streaming Buffer</text>
+  <text x="1000" y="525" text-anchor="middle" fill="white" font-size="9">• Real-time Delivery</text>
+  <text x="1000" y="538" text-anchor="middle" fill="white" font-size="9">• Latency Optimization</text>
+  
+  <!-- Audio Output -->
+  <rect x="920" y="570" width="160" height="60" rx="5" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
+  <text x="1000" y="590" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Audio Stream Out</text>
+  <text x="1000" y="605" text-anchor="middle" fill="white" font-size="9">• Twilio WebRTC</text>
+  <text x="1000" y="618" text-anchor="middle" fill="white" font-size="9">• Call Bridge</text>
+  
+  <!-- Configuration Panel -->
+  <rect x="100" y="760" width="1000" height="60" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="600" y="780" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="bold">CONFIGURACIÓN DEL AGENTE</text>
+  <text x="120" y="800" fill="#1e293b" font-size="10">Personality: Customer Support • Voice: Female Neural • Language: Spanish • Domain: Healthcare • Functions: [Appointment, FAQ, Escalation]</text>
+  
+  <!-- Flow Arrows -->
+  <!-- Input Flow -->
+  <path d="M300 200 L350 200" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M300 280 L350 250" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M300 360 L350 300" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M300 440 L350 350" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Processing Flow -->
+  <path d="M590 250 L610 250" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M600 390 L600 410" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M600 510 L600 530" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Output Flow -->
+  <path d="M850 200 L920 200" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M1000 230 L1000 250" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M1000 310 L1000 330" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M1000 390 L1000 410" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M1000 470 L1000 490" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M1000 550 L1000 570" stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Feedback Loop -->
+  <path d="M370 600 L300 600 L300 520 L300 520" stroke="#dc2626" stroke-width="2" fill="none" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  <text x="250" y="560" text-anchor="middle" fill="#dc2626" font-size="9" transform="rotate(-90 250 560)">Feedback Loop</text>
+  
+  <!-- Performance Metrics -->
+  <rect x="50" y="850" width="350" height="40" rx="5" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="225" y="868" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="bold">MÉTRICAS DE RENDIMIENTO</text>
+  <text x="60" y="885" fill="#5b21b6" font-size="9">Latencia E2E: &lt;150ms | Throughput: 1000 req/s | Memory: 512MB</text>
+  
+  <!-- Agent State -->
+  <rect x="450" y="850" width="300" height="40" rx="5" fill="#dcfce7" stroke="#10b981" stroke-width="1"/>
+  <text x="600" y="868" text-anchor="middle" fill="#047857" font-size="11" font-weight="bold">ESTADO DEL AGENTE</text>
+  <text x="460" y="885" fill="#047857" font-size="9">Status: Active | Calls: 12 | Uptime: 99.97% | Last Update: 2s ago</text>
+  
+  <!-- Resource Usage -->
+  <rect x="800" y="850" width="350" height="40" rx="5" fill="#fed7d7" stroke="#ef4444" stroke-width="1"/>
+  <text x="975" y="868" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="bold">USO DE RECURSOS</text>
+  <text x="810" y="885" fill="#dc2626" font-size="9">CPU: 45% | RAM: 312MB | GPU: 23% | Network: 125Mbps</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>

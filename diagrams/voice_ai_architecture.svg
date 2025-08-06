@@ -1,0 +1,130 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" fill="#1e293b" font-size="24" font-weight="bold">Arquitectura Sistema Voice AI Agents</text>
+  
+  <!-- Client Layer -->
+  <rect x="50" y="80" width="280" height="120" rx="10" fill="#3b82f6" stroke="#1e40af" stroke-width="2"/>
+  <text x="190" y="105" text-anchor="middle" fill="white" font-size="16" font-weight="bold">CLIENTE</text>
+  <text x="190" y="125" text-anchor="middle" fill="white" font-size="12">React Web App</text>
+  <text x="70" y="145" fill="white" font-size="10">• Configuración de Agentes</text>
+  <text x="70" y="160" fill="white" font-size="10">• Dashboard Analytics</text>
+  <text x="70" y="175" fill="white" font-size="10">• Gestión de Conversaciones</text>
+  <text x="70" y="190" fill="white" font-size="10">• Templates & Personalización</text>
+  
+  <!-- API Backend -->
+  <rect x="460" y="80" width="280" height="120" rx="10" fill="#10b981" stroke="#047857" stroke-width="2"/>
+  <text x="600" y="105" text-anchor="middle" fill="white" font-size="16" font-weight="bold">API BACKEND</text>
+  <text x="600" y="125" text-anchor="middle" fill="white" font-size="12">Node.js + Express</text>
+  <text x="480" y="145" fill="white" font-size="10">• Autenticación & Autorización</text>
+  <text x="480" y="160" fill="white" font-size="10">• CRUD Agentes & Configuraciones</text>
+  <text x="480" y="175" fill="white" font-size="10">• Analytics & Reportes</text>
+  <text x="480" y="190" fill="white" font-size="10">• Billing & Subscriptions</text>
+  
+  <!-- WebSocket Layer -->
+  <rect x="870" y="80" width="280" height="120" rx="10" fill="#8b5cf6" stroke="#6d28d9" stroke-width="2"/>
+  <text x="1010" y="105" text-anchor="middle" fill="white" font-size="16" font-weight="bold">WEBSOCKET SERVER</text>
+  <text x="1010" y="125" text-anchor="middle" fill="white" font-size="12">Python/Node.js</text>
+  <text x="890" y="145" fill="white" font-size="10">• Real-time Communication</text>
+  <text x="890" y="160" fill="white" font-size="10">• Agent State Management</text>
+  <text x="890" y="175" fill="white" font-size="10">• Session Orchestration</text>
+  <text x="890" y="190" fill="white" font-size="10">• Load Balancing</text>
+  
+  <!-- Database -->
+  <rect x="400" y="260" width="200" height="80" rx="10" fill="#6b7280" stroke="#374151" stroke-width="2"/>
+  <text x="500" y="285" text-anchor="middle" fill="white" font-size="14" font-weight="bold">DATABASE</text>
+  <text x="500" y="305" text-anchor="middle" fill="white" font-size="12">PostgreSQL/MongoDB</text>
+  <text x="420" y="325" fill="white" font-size="10">• Usuarios & Agentes</text>
+  
+  <!-- Voice Processing Layer -->
+  <rect x="50" y="400" width="1100" height="100" rx="10" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+  <text x="600" y="425" text-anchor="middle" fill="white" font-size="18" font-weight="bold">CAPA DE PROCESAMIENTO DE VOZ</text>
+  
+  <!-- Twilio -->
+  <rect x="80" y="440" width="200" height="50" rx="8" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+  <text x="180" y="460" text-anchor="middle" fill="white" font-size="12" font-weight="bold">TWILIO</text>
+  <text x="180" y="475" text-anchor="middle" fill="white" font-size="10">Voice Calls & SMS</text>
+  
+  <!-- Deepgram -->
+  <rect x="320" y="440" width="200" height="50" rx="8" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+  <text x="420" y="460" text-anchor="middle" fill="white" font-size="12" font-weight="bold">DEEPGRAM</text>
+  <text x="420" y="475" text-anchor="middle" fill="white" font-size="10">STT & TTS</text>
+  
+  <!-- AI Processing -->
+  <rect x="560" y="440" width="200" height="50" rx="8" fill="#06b6d4" stroke="#0891b2" stroke-width="2"/>
+  <text x="660" y="460" text-anchor="middle" fill="white" font-size="12" font-weight="bold">AI ENGINE</text>
+  <text x="660" y="475" text-anchor="middle" fill="white" font-size="10">OpenAI/Claude/Local</text>
+  
+  <!-- Context Management -->
+  <rect x="800" y="440" width="200" height="50" rx="8" fill="#10b981" stroke="#059669" stroke-width="2"/>
+  <text x="900" y="460" text-anchor="middle" fill="white" font-size="12" font-weight="bold">CONTEXT MGMT</text>
+  <text x="900" y="475" text-anchor="middle" fill="white" font-size="10">Redis/Memory</text>
+  
+  <!-- Agent Runtime Layer -->
+  <rect x="250" y="550" width="700" height="120" rx="10" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+  <text x="600" y="575" text-anchor="middle" fill="white" font-size="16" font-weight="bold">AGENTES AI EN EJECUCIÓN</text>
+  
+  <!-- Individual Agents -->
+  <rect x="280" y="590" width="120" height="70" rx="5" fill="#fbbf24" stroke="#f59e0b" stroke-width="1"/>
+  <text x="340" y="610" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">Agent 1</text>
+  <text x="340" y="625" text-anchor="middle" fill="#92400e" font-size="8">Customer Support</text>
+  <text x="340" y="640" text-anchor="middle" fill="#92400e" font-size="8">Status: Active</text>
+  <text x="340" y="650" text-anchor="middle" fill="#92400e" font-size="8">Calls: 12</text>
+  
+  <rect x="430" y="590" width="120" height="70" rx="5" fill="#fbbf24" stroke="#f59e0b" stroke-width="1"/>
+  <text x="490" y="610" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">Agent 2</text>
+  <text x="490" y="625" text-anchor="middle" fill="#92400e" font-size="8">Sales Qualifier</text>
+  <text x="490" y="640" text-anchor="middle" fill="#92400e" font-size="8">Status: Active</text>
+  <text x="490" y="650" text-anchor="middle" fill="#92400e" font-size="8">Calls: 8</text>
+  
+  <rect x="580" y="590" width="120" height="70" rx="5" fill="#fbbf24" stroke="#f59e0b" stroke-width="1"/>
+  <text x="640" y="610" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">Agent 3</text>
+  <text x="640" y="625" text-anchor="middle" fill="#92400e" font-size="8">Health Assistant</text>
+  <text x="640" y="640" text-anchor="middle" fill="#92400e" font-size="8">Status: Idle</text>
+  <text x="640" y="650" text-anchor="middle" fill="#92400e" font-size="8">Calls: 0</text>
+  
+  <rect x="730" y="590" width="120" height="70" rx="5" fill="#fbbf24" stroke="#f59e0b" stroke-width="1"/>
+  <text x="790" y="610" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">Agent N</text>
+  <text x="790" y="625" text-anchor="middle" fill="#92400e" font-size="8">Custom Agent</text>
+  <text x="790" y="640" text-anchor="middle" fill="#92400e" font-size="8">Status: Config</text>
+  <text x="790" y="650" text-anchor="middle" fill="#92400e" font-size="8">Calls: -</text>
+  
+  <!-- Monitoring -->
+  <rect x="50" y="720" width="200" height="60" rx="8" fill="#374151" stroke="#1f2937" stroke-width="2"/>
+  <text x="150" y="740" text-anchor="middle" fill="white" font-size="12" font-weight="bold">MONITORING</text>
+  <text x="150" y="755" text-anchor="middle" fill="white" font-size="10">Logs & Metrics</text>
+  <text x="150" y="770" text-anchor="middle" fill="white" font-size="10">Error Tracking</text>
+  
+  <!-- Security -->
+  <rect x="950" y="720" width="200" height="60" rx="8" fill="#374151" stroke="#1f2937" stroke-width="2"/>
+  <text x="1050" y="740" text-anchor="middle" fill="white" font-size="12" font-weight="bold">SECURITY</text>
+  <text x="1050" y="755" text-anchor="middle" fill="white" font-size="10">Auth & Encryption</text>
+  <text x="1050" y="770" text-anchor="middle" fill="white" font-size="10">Rate Limiting</text>
+  
+  <!-- Arrows -->
+  <!-- Client to API -->
+  <path d="M330 140 L460 140" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="395" y="135" text-anchor="middle" fill="#64748b" font-size="10">HTTP/REST</text>
+  
+  <!-- API to WebSocket -->
+  <path d="M740 140 L870 140" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="805" y="135" text-anchor="middle" fill="#64748b" font-size="10">WebSocket</text>
+  
+  <!-- API to Database -->
+  <path d="M600 200 L500 260" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- WebSocket to Voice Processing -->
+  <path d="M1010 200 L1010 380 L600 380 L600 400" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Voice Processing to Agents -->
+  <path d="M600 500 L600 550" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
