@@ -108,11 +108,7 @@ export class VoiceAgentExpressServer {
       console.log('📞 URL:', url);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
 
-      await this.twilioClient.calls.create({
-        //url: url,
-        to: customerPhoneNumber,
-        from: twilioPhoneNumber,
-        twiml:  `
+      const twiml = `
         <Response>
             <Say voice="alice" language="es-ES"> Hola. </Say>
             <Connect>
@@ -122,6 +118,14 @@ export class VoiceAgentExpressServer {
             </Connect>
         </Response>
       `
+
+      console.log({twiml});
+
+      await this.twilioClient.calls.create({
+        //url: url,
+        to: customerPhoneNumber,
+        from: twilioPhoneNumber,
+        twiml: twiml
       });
       res.send('Llamada iniciada. Revisa tu teléfono.');
     } catch (error) {
