@@ -67,12 +67,34 @@ export class VoiceAgentExpressServer {
 
   private setupExpressRoutes(): void {
     this.app.post('/iniciar-llamada', this.handleIniciarLlamada.bind(this));
-    // this.app.post('/twiml', this.handleTwiML.bind(this));
+    this.app.post('/twiml', this.handleTwiML.bind(this));
     
     // Health check endpoint
     this.app.get('/health', (req: Request, res: Response) => {
       res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
+  }
+
+  private generateDynamicTwiML(websocketUrl: string, parameters: Record<string, any>): string {
+    let parametersXml = '';
+    
+    // Generate Parameter elements for each additional parameter
+    Object.entries(parameters).forEach(([name, value]) => {
+      if (value !== undefined && value !== null) {
+        parametersXml += `\n            <Parameter name="${name}" value="${value}" />`;
+      }
+    });
+    
+    const twiml = `<?xml version="1.0" encoding="UTF-8" ?>
+<Response>
+    <Start>
+        <Stream url="${websocketUrl}">${parametersXml}
+        </Stream>
+    </Start>
+</Response>`;
+    
+    console.log('📄 Generated TwiML:', twiml);
+    return twiml;
   }
 
   private async handleIniciarLlamada(req: Request, res: Response): Promise<void> {
@@ -121,18 +143,15 @@ export class VoiceAgentExpressServer {
 
       const urlWs = websocketUrlWithParams.toString();
       console.log({urlWs});
+      
+      // Generate dynamic TwiML with parameters
+      const twiml = this.generateDynamicTwiML(urlWs, additionalParams);
+      
       await this.twilioClient.calls.create({
         //url: url,
         to: customerPhoneNumber,
         from: twilioPhoneNumber,
-        twiml:  `
-        <Response>
-            <Say voice="alice" language="es-ES"> Hola. </Say>
-            <Connect>
-              <Stream url="${urlWs}"/>
-            </Connect>
-        </Response>
-      `
+        twiml: twiml
       });
       res.send('Llamada iniciada. Revisa tu teléfono.');
     } catch (error) {
@@ -141,33 +160,34 @@ export class VoiceAgentExpressServer {
     }
   }
 
-  // private handleTwiML(req: Request, res: Response): void {
-  //   console.log('📄 Generando TwiML para la llamada...');
+  private handleTwiML(req: Request, res: Response): void {
+    console.log('📄 Generando TwiML para la llamada...');
     
-  //   const websocketUrl = req.query.websocketUrl as string;
+    const websocketUrl = req.query.websocketUrl as string;
     
-  //   if (!websocketUrl) {
-  //     console.error('❌ Error: websocketUrl parameter is required');
-  //     res.status(400).send('Error: websocketUrl parameter is required');
-  //     return;
-  //   }
+    if (!websocketUrl) {
+      console.error('❌ Error: websocketUrl parameter is required');
+      res.status(400).send('Error: websocketUrl parameter is required');
+      return;
+    }
     
-  //   console.log('🔗 WebSocket URL for TwiML:', websocketUrl);
-  //   console.log('📋 All query parameters:', req.query);
+    console.log('🔗 WebSocket URL for TwiML:', websocketUrl);
+    console.log('📋 All query parameters:', req.query);
     
-  //   const twiml = `
-  //     <Response>
-  //         <Say voice="alice" language="es-ES"> Hola. </Say>
-  //         <Connect>
-  //           <Stream url="${encodeURIComponent(websocketUrl)}"/>
-  //         </Connect>
-  //     </Response>
-  //   `;
-  //   console.log({twiml});
+    // Extract additional parameters from query
+    const additionalParams: Record<string, any> = {};
+    Object.entries(req.query).forEach(([key, value]) => {
+      if (key !== 'websocketUrl' && value !== undefined && value !== null) {
+        additionalParams[key] = String(value);
+      }
+    });
+    
+    const twiml = this.generateDynamicTwiML(websocketUrl, additionalParams);
+    console.log({twiml});
 
-  //   res.type('text/xml');
-  //   res.send(twiml);
-  // }
+    res.type('text/xml');
+    res.send(twiml);
+  }
 
   private setupWebSocketHandlers(): void {
     this.wss.on('connection', (ws: WebSocket, req: any) => {
