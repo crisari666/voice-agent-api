@@ -67,7 +67,7 @@ export class VoiceAgentExpressServer {
 
   private setupExpressRoutes(): void {
     this.app.post('/iniciar-llamada', this.handleIniciarLlamada.bind(this));
-    this.app.post('/twiml', this.handleTwiML.bind(this));
+    // this.app.post('/twiml', this.handleTwiML.bind(this));
     
     // Health check endpoint
     this.app.get('/health', (req: Request, res: Response) => {
@@ -78,7 +78,7 @@ export class VoiceAgentExpressServer {
   private async handleIniciarLlamada(req: Request, res: Response): Promise<void> {
     console.log('📞 Iniciando llamada...');
     
-    const { websocketUrl, fromNumber, toNumber } = req.body;
+    const { websocketUrl, fromNumber, toNumber, ...additionalParams } = req.body;
     const customerPhoneNumber = toNumber || process.env.CUSTOMER_PHONE_NUMBER;
     const twilioPhoneNumber = fromNumber || process.env.TWILIO_PHONE_NUMBER;
 
@@ -86,21 +86,48 @@ export class VoiceAgentExpressServer {
       res.status(500).send('Error: Phone numbers are required. Either provide fromNumber and toNumber in request body or set CUSTOMER_PHONE_NUMBER and TWILIO_PHONE_NUMBER environment variables');
       return;
     }
-
+    console.log({websocketUrl, additionalParams});
     if (!websocketUrl) {
       res.status(400).send('Error: websocketUrl parameter is required');
       return;
     }
 
     try {
-      console.log({websocketUrl});
-      const url = `${req.protocol}s://${req.get('host')}/twiml?websocketUrl=${(websocketUrl)}`;
+      // Build query parameters including websocketUrl and any additional params
+      const queryParams = new URLSearchParams();
+      queryParams.append('websocketUrl', websocketUrl);
+      
+      // Add any additional parameters from the request body
+      Object.entries(additionalParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
+      });
+      
+      const url = `${req.protocol}s://${req.get('host')}/twiml?${queryParams.toString()}`;
       console.log('📞 URL:', url);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
+
+      // Add query parameters to the WebSocket URL
+      const websocketUrlWithParams = new URL(websocketUrl);
+      Object.entries(additionalParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          websocketUrlWithParams.searchParams.append(key, String(value));
+        }
+      });
+
       await this.twilioClient.calls.create({
-        url: websocketUrl,
+        //url: url,
         to: customerPhoneNumber,
         from: twilioPhoneNumber,
+        twiml:  `
+        <Response>
+            <Say voice="alice" language="es-ES"> Hola. </Say>
+            <Connect>
+              <Stream url="${websocketUrlWithParams.toString()}"/>
+            </Connect>
+        </Response>
+      `
       });
       res.send('Llamada iniciada. Revisa tu teléfono.');
     } catch (error) {
@@ -109,32 +136,33 @@ export class VoiceAgentExpressServer {
     }
   }
 
-  private handleTwiML(req: Request, res: Response): void {
-    console.log('📄 Generando TwiML para la llamada...');
+  // private handleTwiML(req: Request, res: Response): void {
+  //   console.log('📄 Generando TwiML para la llamada...');
     
-    const websocketUrl = req.query.websocketUrl as string;
+  //   const websocketUrl = req.query.websocketUrl as string;
     
-    if (!websocketUrl) {
-      console.error('❌ Error: websocketUrl parameter is required');
-      res.status(400).send('Error: websocketUrl parameter is required');
-      return;
-    }
+  //   if (!websocketUrl) {
+  //     console.error('❌ Error: websocketUrl parameter is required');
+  //     res.status(400).send('Error: websocketUrl parameter is required');
+  //     return;
+  //   }
     
-    console.log('🔗 WebSocket URL for TwiML:', websocketUrl);
+  //   console.log('🔗 WebSocket URL for TwiML:', websocketUrl);
+  //   console.log('📋 All query parameters:', req.query);
     
-    const twiml = `
-      <Response>
-          <Say voice="alice" language="es-ES"> Hola. </Say>
-          <Connect>
-            <Stream url="${decodeURIComponent(websocketUrl)}"/>
-          </Connect>
-      </Response>
-    `;
-    console.log({twiml});
+  //   const twiml = `
+  //     <Response>
+  //         <Say voice="alice" language="es-ES"> Hola. </Say>
+  //         <Connect>
+  //           <Stream url="${encodeURIComponent(websocketUrl)}"/>
+  //         </Connect>
+  //     </Response>
+  //   `;
+  //   console.log({twiml});
 
-    res.type('text/xml');
-    res.send(twiml);
-  }
+  //   res.type('text/xml');
+  //   res.send(twiml);
+  // }
 
   private setupWebSocketHandlers(): void {
     this.wss.on('connection', (ws: WebSocket, req: any) => {

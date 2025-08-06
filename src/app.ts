@@ -13,13 +13,13 @@ const main = (): void => {
 
   // Graceful shutdown handling
   process.on('SIGINT', () => {
-    console.log('\n🔄 Received SIGINT, shutting down gracefully...');
+    console.log('\n🔄 Received SIGINT, shutting down gracefully... 888');
     server.stop();
     process.exit(0);
   });
 
   process.on('SIGTERM', () => {
-    console.log('\n🔄 Received SIGTERM, shutting down gracefully...');
+    console.log('\n🔄 Received SIGTERM, shutting down gracefully... 77');
     server.stop();
     process.exit(0);
   });
