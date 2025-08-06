@@ -31,10 +31,15 @@ export class VoiceAgentExpressServer {
 
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
+
     if (!accountSid || !authToken) {
       throw new Error('TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN are required');
     }
 
+    if (!deepgramApiKey) {
+      throw new Error('DEEPGRAM_API_KEY is required');
+    }
 
     this.twilioClient = new Twilio(accountSid, authToken);
     this.agentConfig = this.loadAgentConfig();
@@ -88,7 +93,9 @@ export class VoiceAgentExpressServer {
     }
 
     try {
-      console.log('📞 URL:', websocketUrl);
+      console.log({websocketUrl});
+      const url = `${req.protocol}s://${req.get('host')}/twiml?websocketUrl=${(websocketUrl)}`;
+      console.log('📞 URL:', url);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
       await this.twilioClient.calls.create({
         url: websocketUrl,
