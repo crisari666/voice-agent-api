@@ -113,7 +113,7 @@ export class VoiceAgentExpressServer {
             <Say voice="alice" language="es-ES"> Hola. </Say>
             <Connect>
               <Stream url="${websocketUrl}">
-                <Parameter name="customer_name" value="Felipe" />
+                ${Object.entries(additionalParams).map(([key, value]) => `<Parameter name="${key}" value="${value}" />`).join('\n')}
               </Stream>
             </Connect>
         </Response>
