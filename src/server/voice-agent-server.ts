@@ -37,9 +37,9 @@ export class VoiceAgentExpressServer {
       throw new Error('TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN are required');
     }
 
-    if (!deepgramApiKey) {
-      throw new Error('DEEPGRAM_API_KEY is required');
-    }
+    // if (!deepgramApiKey) {
+    //   throw new Error('DEEPGRAM_API_KEY is required');
+    // }
 
     this.twilioClient = new Twilio(accountSid, authToken);
     this.agentConfig = this.loadAgentConfig();
