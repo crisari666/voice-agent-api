@@ -116,6 +116,8 @@ export class VoiceAgentExpressServer {
         }
       });
 
+      const urlWs = websocketUrlWithParams.toString();
+      console.log({urlWs});
       await this.twilioClient.calls.create({
         //url: url,
         to: customerPhoneNumber,
@@ -124,7 +126,7 @@ export class VoiceAgentExpressServer {
         <Response>
             <Say voice="alice" language="es-ES"> Hola. </Say>
             <Connect>
-              <Stream url="${websocketUrlWithParams.toString()}"/>
+              <Stream url="${urlWs}"/>
             </Connect>
         </Response>
       `
