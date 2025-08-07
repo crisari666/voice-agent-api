@@ -78,7 +78,7 @@ export class VoiceAgentExpressServer {
   private async handleIniciarLlamada(req: Request, res: Response): Promise<void> {
     console.log('📞 Iniciando llamada...');
     
-    const { websocketUrl, fromNumber, toNumber, is_dev, ...additionalParams } = req.body;
+    const { websocketUrl, fromNumber, toNumber, ...additionalParams } = req.body;
     const customerPhoneNumber = toNumber || process.env.CUSTOMER_PHONE_NUMBER;
     const twilioPhoneNumber = fromNumber || process.env.TWILIO_PHONE_NUMBER;
 
