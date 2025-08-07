@@ -69,10 +69,23 @@ export class VoiceAgentExpressServer {
     this.app.post('/iniciar-llamada', this.handleIniciarLlamada.bind(this));
     this.app.post('/twiml', this.handleTwiML.bind(this));
     
+    // Webhook endpoints
+    this.app.post('/call-income', this.handleCallIncome.bind(this));
+    this.app.post('/handle-fails', this.handleFails.bind(this));
+    this.app.post('/status-change', this.handleStatusChange.bind(this));
+    this.app.post('/status-change-2', this.handleStatusChange2.bind(this));
+    this.app.post('/request', this.handleRequest.bind(this));
+    this.app.post('/amd-status', this.handleAmdStatus.bind(this));
+    
     // Health check endpoint
     this.app.get('/health', (req: Request, res: Response) => {
       res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
+  }
+
+  private async handleRequest(req: Request, res: Response): Promise<void> {
+    console.log('📥 Request received:', req.body);
+    res.status(200).json({ status: 'ok' });
   }
 
   private async handleIniciarLlamada(req: Request, res: Response): Promise<void> {
@@ -96,6 +109,7 @@ export class VoiceAgentExpressServer {
       // Build query parameters including websocketUrl and any additional params
       const queryParams = new URLSearchParams();
       queryParams.append('websocketUrl', websocketUrl);
+
       
       // Add any additional parameters from the request body
       Object.entries(additionalParams).forEach(([key, value]) => {
@@ -108,9 +122,11 @@ export class VoiceAgentExpressServer {
       console.log('📞 URL:', url);
       console.log('🔗 Calling from:', twilioPhoneNumber, 'to:', customerPhoneNumber);
 
+      const customerName = additionalParams.customer_name || '';
+
       const twiml = `
         <Response>
-            <Say voice="alice" language="es-ES"> Hola. </Say>
+            <Say voice="alice" language="es-ES"> Hola ${customerName}, soy el asistente virtual de Valle del Olimpo. </Say>
             <Connect>
               <Stream url="${websocketUrl}">
                 ${Object.entries(additionalParams).map(([key, value]) => `<Parameter name="${key}" value="${value}" />`).join('\n')}
@@ -125,7 +141,18 @@ export class VoiceAgentExpressServer {
         //url: url,
         to: customerPhoneNumber,
         from: twilioPhoneNumber,
-        twiml: twiml
+        twiml: twiml,
+        statusCallback: `${process.env.TWILIO_STATUS_CALLBACK_URL}/status-change-2`,
+        statusCallbackMethod: 'POST',
+        statusCallbackEvent: ['queued', 'no-answer', 'ringing', 'answered', 'canceled', 'failed', 'completed', 'busy'],
+        asyncAmdStatusCallback: `${process.env.TWILIO_STATUS_CALLBACK_URL}/amd-status`,
+        asyncAmdStatusCallbackMethod: 'POST',
+        machineDetection: 'Enable',
+
+      }).then((call) => {
+        console.log('📞 Llamada iniciada:', call.sid);
+      }).catch((error) => {
+        console.error('❌ Error al iniciar la llamada:', error);
       });
       res.send('Llamada iniciada. Revisa tu teléfono.');
     } catch (error) {
@@ -160,6 +187,47 @@ export class VoiceAgentExpressServer {
 
     res.type('text/xml');
     res.send(twiml);
+  }
+
+  private handleWebhook(req: Request, res: Response): void {
+    console.log('📥 Webhook received:', req.body);
+    res.status(200).json({ status: 'ok' });
+  }
+
+  private handleCallIncome(req: Request, res: Response): void {
+    console.log('📞 Call income received:', req.body);
+    res.status(200).json({ status: 'ok' });
+  }
+
+  private handleFails(req: Request, res: Response): void {
+    console.log('❌ Handle fails received:', req.body);
+    res.status(200).json({ status: 'ok' });
+  }
+
+  private handleStatusChange(req: Request, res: Response): void {
+    console.log('🔄 Status change received 2:', req.body);
+    res.status(200).json({ status: 'ok' });
+  }
+  
+  private handleStatusChange2(req: Request, res: Response): void {
+    console.log('🔄 Status secod change received:', req.body);
+    res.status(200).json({ status: 'ok' });
+  }
+
+  private handleAmdStatus(req: Request, res: Response): void {
+    const { AnsweredBy, CallSid } = req.body;
+    console.log(`🤖 AMD status for call ${CallSid}: ${AnsweredBy}`);
+
+    if (AnsweredBy === 'machine_start') {
+      console.log(`🤖 Answering machine detected for call ${CallSid}. Hanging up.`);
+      this.twilioClient.calls(CallSid).update({ status: 'completed' })
+        .then(call => console.log(`📞 Call ${call.sid} terminated.`))
+        .catch(error => console.error(`❌ Error terminating call ${CallSid}:`, error));
+    } else if (AnsweredBy === 'human') {
+      console.log(`🧑 Human answered call ${CallSid}.`);
+    }
+
+    res.status(200).send('OK');
   }
 
   private setupWebSocketHandlers(): void {
