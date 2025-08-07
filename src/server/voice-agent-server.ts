@@ -29,8 +29,8 @@ export class VoiceAgentExpressServer {
       path: '/twilio'  // Specify the path here
     });
 
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const accountSid = process.env.TWILIO_ACCOUNT_SID_PROD;
+    const authToken = process.env.TWILIO_AUTH_TOKEN_PROD;
     const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
 
     if (!accountSid || !authToken) {
@@ -78,7 +78,7 @@ export class VoiceAgentExpressServer {
   private async handleIniciarLlamada(req: Request, res: Response): Promise<void> {
     console.log('📞 Iniciando llamada...');
     
-    const { websocketUrl, fromNumber, toNumber, ...additionalParams } = req.body;
+    const { websocketUrl, fromNumber, toNumber, is_dev, ...additionalParams } = req.body;
     const customerPhoneNumber = toNumber || process.env.CUSTOMER_PHONE_NUMBER;
     const twilioPhoneNumber = fromNumber || process.env.TWILIO_PHONE_NUMBER;
 
