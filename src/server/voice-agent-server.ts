@@ -126,7 +126,7 @@ export class VoiceAgentExpressServer {
 
       const twiml = `
         <Response>
-            <Say voice="alice" language="es-ES"> Hola ${customerName}, soy el asistente virtual de Valle del Olimpo. </Say>
+            <Say voice="alice" language="es-ES">Hola, soy el asistente virtual de Valle del Olimpo.</Say>
             <Connect>
               <Stream url="${websocketUrl}">
                 ${Object.entries(additionalParams).map(([key, value]) => `<Parameter name="${key}" value="${value}" />`).join('\n')}
@@ -145,9 +145,6 @@ export class VoiceAgentExpressServer {
         statusCallback: `${process.env.TWILIO_STATUS_CALLBACK_URL}/status-change-2`,
         statusCallbackMethod: 'POST',
         statusCallbackEvent: ['queued', 'no-answer', 'ringing', 'answered', 'canceled', 'failed', 'completed', 'busy'],
-        asyncAmdStatusCallback: `${process.env.TWILIO_STATUS_CALLBACK_URL}/amd-status`,
-        asyncAmdStatusCallbackMethod: 'POST',
-        machineDetection: 'Enable',
 
       }).then((call) => {
         console.log('📞 Llamada iniciada:', call.sid);
