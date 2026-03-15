@@ -51,7 +51,7 @@ export class VoiceAgentExpressServer {
 
   private loadAgentConfig(): any {
     try {
-      const configPath = path.join(process.cwd(), 'config.json');
+      const configPath = path.join(process.cwd(), 'config_lotes.json');
       const configData = fs.readFileSync(configPath, 'utf8');
       return JSON.parse(configData);
     } catch (error) {
@@ -280,6 +280,7 @@ export class VoiceAgentExpressServer {
           console.log('🎤 Received raw audio from Deepgram');
           const currentStreamSid = audioProcessor.getStreamSid();
           if (currentStreamSid) {
+            console.log('🎤 Sending media message to Twilio');
             const mediaMessage = {
               event: 'media',
               streamSid: currentStreamSid,
