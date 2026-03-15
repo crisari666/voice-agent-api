@@ -126,7 +126,7 @@ export class VoiceAgentExpressServer {
 
       const twiml = `
         <Response>
-            <Say voice="alice" language="es-ES">Hola, soy el asistente virtual de Valle del Olimpo.</Say>
+            <Say voice="alice" language="es-ES">Hola, esta es una llamada de prueba.</Say>
             <Connect>
               <Stream url="${websocketUrl}">
                 ${Object.entries(additionalParams).map(([key, value]) => `<Parameter name="${key}" value="${value}" />`).join('\n')}
