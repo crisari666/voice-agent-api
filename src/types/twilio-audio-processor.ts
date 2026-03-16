@@ -1,5 +1,11 @@
 import { WebSocket } from 'ws';
 
+/** Adapter for sending audio to Deepgram (WebSocket or SDK connection). */
+export interface DeepgramAudioSender {
+  send(data: Buffer): void;
+  readyState?: number;
+}
+
 export interface TwilioAudioProcessorConfig {
   readonly bufferSize: number;
 }
@@ -15,25 +21,28 @@ export class TwilioAudioProcessor {
     this.streamSid = null;
   }
 
-  public processMessage(message: any, deepgramConnection: WebSocket): void {
-    if (message.type === 'utf8') {
-      const data = JSON.parse(message.utf8Data);
-      this.handleTwilioEvent(data, deepgramConnection);
-    }
+  public processMessage(
+    message: { type: string; utf8Data?: string },
+    sender: WebSocket | DeepgramAudioSender
+  ): void {
+    if (message.type !== 'utf8' || !message.utf8Data) return;
+    const data = JSON.parse(message.utf8Data);
+    this.handleTwilioEvent(data, sender);
   }
 
-  private handleTwilioEvent(data: any, deepgramConnection: WebSocket): void {
+  private handleTwilioEvent(
+    data: { event?: string; start?: { streamSid: string }; media?: { track?: string; payload?: string } },
+    sender: WebSocket | DeepgramAudioSender
+  ): void {
     switch (data.event) {
       case 'connected':
-        // Continue like Python code
         break;
       case 'start':
         console.log('get our streamsid');
-        const start = data.start;
-        this.streamSid = start.streamSid;
+        this.streamSid = data.start?.streamSid ?? null;
         break;
       case 'media':
-        this.handleMediaEvent(data, deepgramConnection);
+        this.handleMediaEvent(data, sender);
         break;
       case 'stop':
         break;
@@ -42,20 +51,27 @@ export class TwilioAudioProcessor {
     }
   }
 
-  private handleMediaEvent(data: any, deepgramConnection: WebSocket): void {
+  private handleMediaEvent(
+    data: { media?: { track?: string; payload?: string } },
+    sender: WebSocket | DeepgramAudioSender
+  ): void {
     const media = data.media;
-    if (media.track === 'inbound') {
-      const chunk = Buffer.from(media.payload, 'base64');
-      this.inBuffer = Buffer.concat([this.inBuffer, chunk]);
-      
-      // Process buffer when we have enough data (exactly like Python)
-      while (this.inBuffer.length >= this.config.bufferSize) {
-        const audioChunk = this.inBuffer.slice(0, this.config.bufferSize);
-        this.inBuffer = this.inBuffer.slice(this.config.bufferSize);
-        
-        // Send raw audio chunk to Deepgram (like Python)
-        if (deepgramConnection.readyState === WebSocket.OPEN) {
-          deepgramConnection.send(audioChunk);
+    if (media?.track !== 'inbound' || !media.payload) return;
+    const chunk = Buffer.from(media.payload, 'base64');
+    this.inBuffer = Buffer.concat([this.inBuffer, chunk]);
+
+    const ready =
+      typeof (sender as DeepgramAudioSender).readyState === 'number'
+        ? (sender as DeepgramAudioSender).readyState === 1
+        : (sender as WebSocket).readyState === WebSocket.OPEN;
+    while (this.inBuffer.length >= this.config.bufferSize) {
+      const audioChunk = this.inBuffer.slice(0, this.config.bufferSize);
+      this.inBuffer = this.inBuffer.slice(this.config.bufferSize);
+      if (ready) {
+        if ('send' in sender && typeof (sender as DeepgramAudioSender).send === 'function') {
+          (sender as DeepgramAudioSender).send(audioChunk);
+        } else {
+          (sender as WebSocket).send(audioChunk);
         }
       }
     }
